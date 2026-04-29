@@ -5,7 +5,7 @@ let currentCompareData = null; // 存储当前生成的对比数据
 
 async function callDeepSeekAI(prompt) {
     try {
-        const response = await fetchfetch("/api/proxy", {
+        const response = await fetch("/api/proxy", {
             method: "POST",
 
             headers: {

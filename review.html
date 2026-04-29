@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业复核助手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>智能专业复核</h2>
+        <div class="form-box">
+            <div class="form-item">
+                <label>复核用途</label>
+                <select id="useType">
+                    <option value="考公">考公</option>
+                    <option value="求职">求职</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>用户姓名</label>
+                <input type="text" id="userName" placeholder="例：张三">
+            </div>
+            <div class="form-item">
+                <label>海外留学院校</label>
+                <input type="text" id="universityName" placeholder="例：伦敦大学学院">
+            </div>
+            <div class="form-item">
+                <label>海外硕士专业</label>
+                <input type="text" id="overseasMajor" placeholder="例：无线通信与信号处理 MSc">
+            </div>
+            <div class="form-item">
+                <label>国内本科专业</label>
+                <input type="text" id="bachelorMajor" placeholder="例：电子信息工程">
+            </div>
+            <div class="form-item">
+                <label>海外所学课程（一行一门）</label>
+                <textarea id="courseList" placeholder="填写课程名称，中英文均可"></textarea>
+            </div>
+            <button class="main-btn" onclick="aiMatchMajor()">AI 智能匹配复核专业</button>
+        </div>
+
+        <!-- AI匹配结果区 -->
+        <div id="matchResult" class="result-box"></div>
+
+        <!-- 高校培养方案PDF区 -->
+        <div id="pdfArea" class="result-box"></div>
+
+        <!-- 课程对比表+自述+下载区 -->
+        <div id="finalArea" class="result-box"></div>
+
+        <!-- 前往留服官网按钮 - 放在最底部 -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #f0d9b5;">
+            <a href="https://zwfw.cscse.edu.cn/" target="_blank" class="main-btn" style="min-width: 200px;">🔗 前往留服官网</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

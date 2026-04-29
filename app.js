@@ -4,6 +4,7 @@ let schoolList = "";
 let currentCompareData = null; // 存储当前生成的对比数据
 
 async function callDeepSeekAI(prompt) {
+    
     try {
         const response = await fetch("/api/proxy", {
             method: "POST",
@@ -24,8 +25,7 @@ async function callDeepSeekAI(prompt) {
         });
         
         if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`API ${response.status}: ${error.substring(0, 100)}`);
+            throw new Error(`请求失败: ${response.status}`);
         }
         
         const data = await response.json();

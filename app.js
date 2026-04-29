@@ -5,7 +5,7 @@ let currentCompareData = null; // 存储当前生成的对比数据
 
 async function callDeepSeekAI(prompt) {
     try {
-        const response = await fetch("https://你的worker域名.workers.dev/v1/chat/completions", {
+        const response = await fetchfetch("/api/proxy", {
             method: "POST",
 
             headers: {

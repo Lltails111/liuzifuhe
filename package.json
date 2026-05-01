@@ -1,0 +1,8 @@
+{
+    "name": "cscse-assistant",
+    "version": "1.0.0",
+    "description": "留服专业复核智能助手",
+    "engines": {
+        "node": "18.x"
+    }
+}

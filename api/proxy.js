@@ -1,44 +1,55 @@
-// api/proxy.js
-export default async function handler(req, res) {
-  // 允许跨域
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  // 处理预检请求
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  // 只允许 POST
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+// server/routes/proxy.js
+const express = require('express');
+const router = express.Router();
 
-  // 获取 API Key（从环境变量）
-  const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-  
-  if (!DEEPSEEK_API_KEY) {
-    console.error('API Key 未配置');
-    return res.status(500).json({ error: 'API Key 未配置，请在 Vercel 环境变量中添加 DEEPSEEK_API_KEY' });
-  }
-
-  try {
+async function callDeepSeek(messages, options = {}) {
+    const { temperature = 0.3, model = 'deepseek-chat' } = options;
+    
+    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+    
+    if (!DEEPSEEK_API_KEY) {
+        throw new Error('DEEPSEEK_API_KEY 未配置');
+    }
+    
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify(req.body)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: model,
+            messages: messages,
+            temperature: temperature,
+            stream: false
+        })
     });
     
-    const data = await response.json();
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`DeepSeek API 错误: ${response.status} - ${error}`);
+    }
     
-    // 返回结果
-    return res.status(200).json(data);
-  } catch (error) {
-    console.error('代理错误:', error);
-    return res.status(500).json({ error: error.message });
-  }
+    const data = await response.json();
+    return data.choices[0]?.message?.content || '';
 }
+
+router.post('/', async (req, res) => {
+    try {
+        const { model, messages, temperature } = req.body;
+        
+        console.log(`📡 DeepSeek 请求: ${messages.length} 条消息`);
+        
+        const content = await callDeepSeek(messages, { model, temperature });
+        
+        res.json({
+            choices: [{ message: { content } }]
+        });
+        
+    } catch (error) {
+        console.error('Proxy error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+module.exports = router;
